@@ -1,18 +1,29 @@
-## Getting Started
+# app
+
+> My superb app
+
+
+## Dev
 
 ```
-npm install && npm start
+$ npm install
 ```
 
-### For development
-```
-npm install -g browserify watchify
-```
+### Run
 
 ```
-npm run watch
+$ npm start
 ```
 
+### Build
+
 ```
-npm start
+$ npm run build
 ```
+
+Builds the app for macOS, Linux, and Windows, using [electron-packager](https://github.com/electron-userland/electron-packager).
+
+
+## License
+
+MIT © [<%= name %>](<%= website %>)

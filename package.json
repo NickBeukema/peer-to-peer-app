@@ -1,28 +1,48 @@
 {
-  "name": "electron-app",
-  "version": "1.0.0",
-  "description": "An Electron Application",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "watch": "watchify app/app.js -t babelify -o public/js/bundle.js --debug --verbose"
-  },
-  "repository": "",
-  "keywords": [
-    "Electron"
-  ],
-  "author": "Nick Beukema",
+  "name": "app",
+  "productName": "App",
+  "version": "0.0.0",
+  "description": "",
   "license": "MIT",
+  "repository": "user/repo",
+  "author": {
+    "name": "",
+    "email": "",
+    "url": ""
+  },
+  "scripts": {
+    "test": "xo",
+    "start": "electron .",
+    "build": "electron-packager . --out=dist --asar --overwrite --all",
+    "watch": "watchify app/app.js -t babelify -o js/script.js --debug --verbose"
+  },
+  "files": [
+    "index.js",
+    "index.html",
+    "index.css"
+  ],
+  "keywords": [
+    "electron-app",
+    "electron"
+  ],
+  "dependencies": {
+    "electron-debug": "^1.0.0"
+  },
   "devDependencies": {
-    "axios": "^0.15.2",
+    "devtron": "^1.1.0",
     "babel-preset-es2015": "^6.18.0",
-    "babel-preset-react": "^6.16.0",
     "babelify": "^7.3.0",
-    "classnames": "^2.2.5",
-    "electron": "^1.4.1",
+    "electron-packager": "^8.0.0",
+    "electron": "^1.0.1",
     "electron-reload": "^1.0.2",
-    "jquery": "^3.1.1",
-    "react": "^15.3.2",
-    "react-dom": "^15.3.2"
+    "xo": "^0.16.0",
+    "jquery": "^3.1.1"
+  },
+  "xo": {
+    "esnext": true,
+    "envs": [
+      "node",
+      "browser"
+    ]
   }
 }
