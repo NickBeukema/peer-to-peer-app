@@ -16,3 +16,19 @@ connectButton.addEventListener('click', function(){
   console.log(hostServerAddress);
   ipc.send('connect', hostServerAddress);
 });
+
+var server = require("./js/Server").server();
+var client = require("./js/Client").client();
+
+setTimeout(function(){
+  client.list("/", function(err, res){
+    if (err){
+      console.log(err);
+      return;
+    }
+
+    console.log(res);
+  });
+
+}, 100);
+
