@@ -30,7 +30,7 @@ function File(fileName, description) {
 
 //Function to print the users table
 function printUsersTable() {
-	console.log('Username, Hostname, Connection Speed');
+	console.log('\nUsername, Hostname, Connection Speed');
 	for(var i = 0; i < usersTable.length; i++){
 		console.log('User ' + i + ': ' + usersTable[i].userName + ', ' + usersTable[i].hostName + ', ' + usersTable[i].connSpeed);
 	}
@@ -38,35 +38,69 @@ function printUsersTable() {
 
 //Function to print the files table
 function printFilesTable() {
-	console.log('Filename, Description');
-	for(var i = 0; i < usersTable.length; i++){
+	console.log('\nFilename, Description');
+	for(var i = 0; i < filesTable.length; i++){
 		console.log('File ' + i + ': ' + filesTable[i].fileName + ', ' + filesTable[i].description);
 	}
 };
 
-//Connect to client, store user and file information
-app.get('/', function (req, res) {
+
+app.get('/search', function (req, res) {
    
-   console.log('Client has joined');
+   console.log('Client has queried');
+   
+})
+
+
+//Connect to client, store user and file information
+app.post('/register', function(req, res) {
 
    //Store the username, hostname, and connection speed
-   // var userName = req.body.userName;
-   // var hostName = req.body.hostName;
-   // var connSpeed = req.body.connSpeed;
-   // var user = new User(userName, hostName, connSpeed);
-   // usersTable.push(user);
+   var userName = req.body.userName;
+   var hostName = req.body.hostName;
+   var connSpeed = req.body.connSpeed;
 
-	//TESTING USER AND FILE TABLES
-   var user = new User('un', 'hn', 'cs');
-   var file = new File('fn', 'd');
+   //If client didn't send the required information, respond with missing info
+   if(userName == undefined){
+      res.json('Missing username');
+      console.log('\nClient failed to join');
+      return;
+   }
+   else if(hostName == undefined){
+      res.json('Missing hostname');
+      console.log('\nClient failed to join');
+      return;
+   }
+   else if(connSpeed == undefined){
+      res.json('Missing connection speed');
+      console.log('\nClient failed to join');
+      return;
+   }
+
+   //Else, let the client join
+   console.log('\nClient has joined')
+
+   //Store the file names and descriptions
+   var fileNames = req.body.fileNames;
+   var descriptions = req.body.descriptions;
+
+   //Push userName, hostName, and connSpeed to users table
+   var user = new User(userName, hostName, connSpeed);
    usersTable.push(user);
-   filesTable.push(file);
+
+   //Push files and descriptions to files table
+   for(var i = 0; i < fileNames.length; i++){
+      var file = new File(fileNames[i], descriptions[i]);
+      filesTable.push(file);
+   }
+
+   //Print Users and Files tables to console
    printUsersTable();
    printFilesTable();
 
    //Send response back to client
-   res.send('Connected');
-   
+   res.json('Connected');
+
 })
 
 
