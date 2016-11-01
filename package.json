@@ -11,6 +11,9 @@
     "electron-prebuilt": "^0.30.3"
   },
   "dependencies": {
+    "bootstrap": "^3.3.7",
+    "ftpd": "^0.2.15",
+    "jsftp": "^1.5.5",
     "nconf": "^0.7.2"
   }
 }
