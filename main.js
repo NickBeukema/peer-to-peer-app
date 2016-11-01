@@ -4,9 +4,16 @@ var app = require('app');
 var BrowserWindow = require('browser-window');
 var ipc = require('ipc');
 
+var CLIConfigurations = { port: "7710" };
+
+if(process.argv.length >= 3) {
+  CLIConfigurations.port = process.argv[2];
+}
 
 var mainWindow = null;
 var settingsWindow = null;
+
+var mainWindow = null;
 
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
@@ -17,6 +24,10 @@ app.on('ready', function() {
     mainWindow.toggleDevTools();
 
     mainWindow.loadUrl('file://' + __dirname + '/index.html');
+});
+
+ipc.on('getPort', function(event, data) {
+  mainWindow.webContents.send('receivePort', CLIConfigurations.port);
 });
 
 ipc.on('connect', function(event, data) {

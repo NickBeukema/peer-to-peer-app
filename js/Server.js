@@ -25,11 +25,13 @@ module.exports = {
     },
     server: function(customOptions){
         customOptions = customOptions || {};
+        console.log(customOptions);
         Object.keys(options).forEach(function(key){
             if (!customOptions.hasOwnProperty(key)){
                 customOptions[key] = options[key];
             }
         });
+        console.log(customOptions);
         var server = new Server(customOptions.host, customOptions);
 
         server.on('client:connected', function(connection){

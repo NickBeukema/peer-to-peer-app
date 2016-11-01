@@ -8,27 +8,32 @@ var path = require('path');
 
 var net = require('net');
 
-var hostServerInput = document.querySelector('input#host-address');
-var connectButton = document.querySelector('button#connect');
+ipc.send('getPort');
+ipc.on('receivePort', function(port){
 
-connectButton.addEventListener('click', function(){
-  var hostServerAddress = hostServerInput.value;
-  console.log(hostServerAddress);
-  ipc.send('connect', hostServerAddress);
-});
 
-var server = require("./js/Server").server();
-var client = require("./js/Client").client();
+  var hostServerInput = document.querySelector('input#host-address');
+  var connectButton = document.querySelector('button#connect');
 
-setTimeout(function(){
-  client.list("/", function(err, res){
-    if (err){
-      console.log(err);
-      return;
-    }
-
-    console.log(res);
+  connectButton.addEventListener('click', function(){
+    var hostServerAddress = hostServerInput.value;
+    console.log(hostServerAddress);
+    ipc.send('connect', hostServerAddress);
   });
 
-}, 100);
+  var server = require("./js/Server").server({port: port});
+  var client = require("./js/Client").client({port: port});
 
+  setTimeout(function(){
+    client.list("/", function(err, res){
+      if (err){
+        console.log(err);
+        return;
+      }
+
+      console.log(res);
+    });
+
+  }, 100);
+
+});
