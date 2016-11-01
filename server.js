@@ -30,7 +30,7 @@ function File(fileName, description) {
 
 //Function to print the users table
 function printUsersTable() {
-	console.log('\nUsername, Hostname, Connection Speed');
+	console.log('\nUsers Table:');
 	for(var i = 0; i < usersTable.length; i++){
 		console.log('User ' + i + ': ' + usersTable[i].userName + ', ' + usersTable[i].hostName + ', ' + usersTable[i].connSpeed);
 	}
@@ -38,21 +38,14 @@ function printUsersTable() {
 
 //Function to print the files table
 function printFilesTable() {
-	console.log('\nFilename, Description');
+	console.log('\nFiles Table:');
 	for(var i = 0; i < filesTable.length; i++){
 		console.log('File ' + i + ': ' + filesTable[i].fileName + ', ' + filesTable[i].description);
 	}
 };
 
 
-app.get('/search', function (req, res) {
-   
-   console.log('Client has queried');
-   
-})
-
-
-//Connect to client, store user and file information
+//Allow client to connect, store user and file information
 app.post('/register', function(req, res) {
 
    //Store the username, hostname, and connection speed
@@ -78,7 +71,7 @@ app.post('/register', function(req, res) {
    }
 
    //Else, let the client join
-   console.log('\nClient has joined')
+   console.log('\nClient ' + userName + ' has joined.')
 
    //Store the file names and descriptions
    var fileNames = req.body.fileNames;
@@ -101,6 +94,66 @@ app.post('/register', function(req, res) {
    //Send response back to client
    res.json('Connected');
 
+})
+
+
+//Disconnect from client
+app.post('/disconnect', function (req, res) {
+
+   //Set the username, hostname, and connection speed
+   var userName = req.body.userName;
+   var hostName = req.body.hostName;
+   var connSpeed = req.body.connSpeed;
+   var fileNames = req.body.fileNames;
+   var descriptions = req.body.descriptions;
+
+   //Boolean to tell if user was found
+   var foundUser = false;
+
+   //Remove username, hostname, and connection speed
+   for(var i = 0; i < usersTable.length; i++){
+      if(userName == usersTable[i].userName && hostName == usersTable[i].hostName && connSpeed == usersTable[i].connSpeed){
+         usersTable.splice(i, 1);
+         foundUser = true;
+         break;
+      }
+   }
+
+   //Remove files associated with this user
+   //DO WE NEED TO DO THIS STEP??
+   if(foundUser){
+      for(var i = 0; i < fileNames.length; i++){
+         for(var j = 0; j < filesTable.length; j++){
+            if(fileNames[i] == filesTable[j].fileName && descriptions[i] == filesTable[j].description){
+               filesTable.splice(j, 1);
+               j--;  //Account for splice in loop
+               break;
+            }
+         }
+      }
+   }
+
+   //If user was not found, respond with an error message
+   if(foundUser == true){
+      console.log('\nUser ' + userName + ' has disconnected.');
+      res.json('Disconnected');
+   }
+   else{
+      console.log('\nUser ' + userName + ' not found.');
+      res.json('User not found');
+   }
+
+   printUsersTable();
+   printFilesTable();
+
+})
+
+
+//Search and return file
+app.get('/search', function (req, res) {
+   
+   console.log('Client has queried');
+   
 })
 
 
