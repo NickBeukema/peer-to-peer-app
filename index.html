@@ -1,20 +1,88 @@
 <!doctype html>
 <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <title>Peer to Peer Client</title>
-      <link href="css/bootstrap.css" rel="stylesheet" type="text/css"/>
-      <link href="css/index.css" rel="stylesheet" type="text/css"/>
-  </head>
-  <body>
-  <div id="main" class="container-fluid">
+<head>
+    <meta charset="UTF-8">
+    <title>Peer to Peer Client</title>
+    <link href="./node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css"/>
+    <link href="css/index.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="main" class="container-fluid">
+    <h2>Server info</h2>
     <div class="input-group">
-      <input id="host-address"/>
+        <label for="host-address">Host Address:</label>
+        <input id="host-address"/>
+
+        <label for="host-port">Host Port:</label>
+        <input id="host-port"/>
+
+        <label for="username">Username:</label>
+        <input id="username"/>
+
+        <label for="hostname">Hostname:</label>
+        <input id="hostname"/>
+        <label for="speed">Connection Speed:</label>
+        <select id="speed">
+            <option value="fiber" selected>Fiber</option>
+            <option value="ethernet">Ethernet</option>
+            <option value="dial-up">Dial-up</option>
+        </select>
     </div>
 
     <button id="connect">Connect</button>
-  </div>
 
-  <script src="js/index.js"></script>
-  </body>
+    <h2>Search</h2>
+    <div class="input-group">
+        <label for="search-keyword">Keywoard</label>
+        <input id="search-keyword"/>
+
+        <h3>Search Results</h3>
+        <div id="search-results">
+            <table class="table table-striped" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Speed</th>
+                        <th>Hostname</th>
+                        <th>File Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Ethernet</td>
+                        <td>123.123.123.123</td>
+                        <td>test.txt</td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>Ethernet</td>
+                        <td>123.123.123.123</td>
+                        <td>helloworld.txt</td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>Ethernet</td>
+                        <td>123.123.123.123</td>
+                        <td>nope.txt</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h2>FTP</h2>
+    <div class="input-group">
+        <label for="command">Command:</label>
+        <input id="command"/>
+    </div>
+    <textarea id="ftp-text" style="width: 100%;"></textarea>
+
+
+</div>
+
+<script src="js/index.js"></script>
+</body>
 </html>
