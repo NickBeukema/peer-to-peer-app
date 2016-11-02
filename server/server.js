@@ -74,16 +74,23 @@ app.post('/register', function(req, res) {
    console.log('\nClient ' + userName + ' has joined.')
 
    //Store the file names and descriptions
-   var fileNames = req.body.fileNames;
-   var descriptions = req.body.descriptions;
+   // var fileNames = req.body.fileNames;
+   // var descriptions = req.body.descriptions;
+
+   var files = req.body.files;
 
    //Push userName, hostName, and connSpeed to users table
    var user = new User(userName, hostName, connSpeed);
    usersTable.push(user);
 
    //Push files and descriptions to files table
-   for(var i = 0; i < fileNames.length; i++){
-      var file = new File(fileNames[i], descriptions[i]);
+   // for(var i = 0; i < fileNames.length; i++){
+   //    var file = new File(fileNames[i], descriptions[i]);
+   //    filesTable.push(file);
+   // }
+
+   for(var i = 0; i < files.length; i++){
+      var file = new File(files[i].filename, files[i].description);
       filesTable.push(file);
    }
 
