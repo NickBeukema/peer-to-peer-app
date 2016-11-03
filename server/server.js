@@ -47,6 +47,7 @@ function printFilesTable() {
 
 //Allow client to connect, store user and file information
 app.post('/register', function(req, res) {
+  console.log("hit");
 
    //Store the username, hostname, and connection speed
    var userName = req.body.userName;
