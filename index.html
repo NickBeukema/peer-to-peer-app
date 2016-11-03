@@ -8,46 +8,52 @@
 </head>
 <body>
 <div id="main" class="container-fluid">
-    <h2>Server info</h2>
     <div class="input-group">
-        <label for="host-address">Host Address:</label>
-        <input id="host-address"/>
+        <h2>Server info</h2>
+        <div class="input-group" style="">
+            <div class="form-group has-success has-feedback">
+                <label for="tracker-address" class="control-label">tracker address </label>
+                <input id="tracker-address" placeholder="127.0.0.1" class="form-control"/>
+            </div>
 
-        <label for="host-port">Host Port:</label>
-        <input id="host-port"/>
+            <div class="form-group has-feedback has-warning">
+                <label for="tracker-port">tracker port</label>
+                <input id="tracker-port" placeholder="23"/>
+            </div>
+            <label for="username">username</label>
+            <input id="username" placeholder="joe"/>
 
-        <label for="username">Username:</label>
-        <input id="username"/>
+            <label for="hostname">your hostname</label>
+            <input id="hostname" placeholder="anon"/>
+            <label for="speed">Connection Speed</label>
+            <select id="speed" class="form-control">
+                <option value="fiber" selected>Fiber</option>
+                <option value="ethernet">Ethernet</option>
+                <option value="dial-up">Dial-up</option>
+            </select>
+        </div>
 
-        <label for="hostname">Hostname:</label>
-        <input id="hostname"/>
-        <label for="speed">Connection Speed:</label>
-        <select id="speed">
-            <option value="fiber" selected>Fiber</option>
-            <option value="ethernet">Ethernet</option>
-            <option value="dial-up">Dial-up</option>
-        </select>
+        <button id="connect" class="btn btn-primary btn-lg btn-block">connect to tracker</button>
     </div>
 
-    <button id="connect">Connect</button>
-
-    <h2>Search</h2>
     <div class="input-group">
-        <label for="search-keyword">Keywoard</label>
-        <input id="search-keyword"/>
+        <h2>Search</h2>
+        <div class="input-group">
+            <label for="search-keyword">Keywoard</label>
+            <input id="search-keyword"/>
 
-        <h3>Search Results</h3>
-        <div id="search-results">
-            <table class="table table-striped" style="width: 100%;">
-                <thead>
+            <h3>Search Results</h3>
+            <div id="search-results">
+                <table class="table table-striped" style="width: 100%;">
+                    <thead>
                     <tr>
                         <th>#</th>
                         <th>Speed</th>
                         <th>Hostname</th>
                         <th>File Name</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     <tr>
                         <th scope="row">1</th>
                         <td>Ethernet</td>
@@ -68,8 +74,9 @@
                         <td>123.123.123.123</td>
                         <td>nope.txt</td>
                     </tr>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -82,7 +89,12 @@
 
 
 </div>
-
 <script src="js/index.js"></script>
+<script>
+    var server = require("./js/ftps").server({port: port});
+    var client = require("./js/ftpc").client({port: port});
+    window.app = {};
+</script>
+
 </body>
 </html>
