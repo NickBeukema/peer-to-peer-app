@@ -11,7 +11,9 @@
     "electron-prebuilt": "^0.30.3"
   },
   "dependencies": {
+    "body-parser": "^1.15.2",
     "bootstrap": "^3.3.7",
+    "express": "^4.14.0",
     "ftpd": "^0.2.15",
     "jsftp": "^1.5.5",
     "nconf": "^0.7.2"
