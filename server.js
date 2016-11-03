@@ -20,13 +20,13 @@ function User(userName, hostName, connSpeed) {
 	this.userName = userName;
 	this.hostName = hostName;
 	this.connSpeed = connSpeed;
-};
+}
 
 //File constructor
 function File(fileName, description) {
 	this.fileName = fileName;
 	this.description = description;
-};
+}
 
 //Function to print the users table
 function printUsersTable() {
@@ -34,7 +34,7 @@ function printUsersTable() {
 	for(var i = 0; i < usersTable.length; i++){
 		console.log('User ' + i + ': ' + usersTable[i].userName + ', ' + usersTable[i].hostName + ', ' + usersTable[i].connSpeed);
 	}
-};
+}
 
 //Function to print the files table
 function printFilesTable() {
@@ -42,7 +42,7 @@ function printFilesTable() {
 	for(var i = 0; i < filesTable.length; i++){
 		console.log('File ' + i + ': ' + filesTable[i].fileName + ', ' + filesTable[i].description);
 	}
-};
+}
 
 
 //Allow client to connect, store user and file information
@@ -94,7 +94,7 @@ app.post('/register', function(req, res) {
    //Send response back to client
    res.json('Connected');
 
-})
+});
 
 
 //Disconnect from client
@@ -137,24 +137,20 @@ app.post('/disconnect', function (req, res) {
    if(foundUser == true){
       console.log('\nUser ' + userName + ' has disconnected.');
       res.json('Disconnected');
-   }
-   else{
+   } else {
       console.log('\nUser ' + userName + ' not found.');
       res.json('User not found');
    }
-
    printUsersTable();
    printFilesTable();
-
-})
+});
 
 
 //Search and return file
 app.get('/search', function (req, res) {
-   
    console.log('Client has queried');
    
-})
+});
 
 
 //Open up server
@@ -162,4 +158,4 @@ var server = app.listen(6548, function () {
    var host = server.address().address;
    var port = server.address().port;
    console.log('Server listening at %s:%s', host, port);
-})
+});
