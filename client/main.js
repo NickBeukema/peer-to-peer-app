@@ -13,8 +13,6 @@ if(process.argv.length >= 3) {
 var mainWindow = null;
 var settingsWindow = null;
 
-var mainWindow = null;
-
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
         height: 1080,
@@ -22,13 +20,13 @@ app.on('ready', function() {
     });
 
     mainWindow.toggleDevTools();
-
     mainWindow.loadUrl('file://' + __dirname + '/index.html');
 });
 
 ipc.on('getPort', function(event, data) {
   mainWindow.webContents.send('receivePort', CLIConfigurations.port);
 });
+
 
 ipc.on('connect', function(event, data) {
 });

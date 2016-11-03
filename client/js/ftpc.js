@@ -1,8 +1,10 @@
 /**
  * Created by jack on 10/31/16.
  */
+
 var Client = require('jsftp');
 
+//default options
 var options = {
     host: '127.0.0.1',
     port: 7710,
