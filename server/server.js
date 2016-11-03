@@ -47,7 +47,7 @@ function printFilesTable() {
 
 //Allow client to connect, store user and file information
 app.post('/register', function(req, res) {
-   console.log("hit");
+   //console.log("hit");
 
    //Store the username, hostname, and connection speed
    var userName = req.body.userName;
@@ -74,10 +74,6 @@ app.post('/register', function(req, res) {
    //Else, let the client join
    console.log('\nClient ' + userName + ' has joined.')
 
-   //Store the file names and descriptions
-   // var fileNames = req.body.fileNames;
-   // var descriptions = req.body.descriptions;
-
    //Array of files with filename and description fields
    var files = req.body.files;
 
@@ -86,12 +82,7 @@ app.post('/register', function(req, res) {
    usersTable.push(user);
 
    //Push files and descriptions to files table
-   // for(var i = 0; i < fileNames.length; i++){
-   //    var file = new File(fileNames[i], descriptions[i]);
-   //    filesTable.push(file);
-   // }
-
-   for(var i = 0; i < files.length; i++){
+    for(var i = 0; i < files.length; i++){
       var file = new File(files[i].filename, files[i].description);
       filesTable.push(file);
    }
@@ -113,6 +104,8 @@ app.post('/disconnect', function (req, res) {
    var userName = req.body.userName;
    var hostName = req.body.hostName;
    var connSpeed = req.body.connSpeed;
+
+   //Array of files with filename and description fields
    var files = req.body.files;
 
    //Boolean to tell if user was found
@@ -127,6 +120,8 @@ app.post('/disconnect', function (req, res) {
       }
    }
 
+   //Remove files associated with user
+   //If user copies a file from its peer, then leaves, this might try to delete that file from files table...
    if(foundUser){
       for(var i = 0; i < files.length; i++){
          for(var j = 0; j < filesTable.length; j++){
@@ -138,19 +133,6 @@ app.post('/disconnect', function (req, res) {
          }
       }
    }
-
-   //Remove files associated with this user
-   // if(foundUser){
-   //    for(var i = 0; i < fileNames.length; i++){
-   //       for(var j = 0; j < filesTable.length; j++){
-   //          if(fileNames[i] == filesTable[j].fileName && descriptions[i] == filesTable[j].description){
-   //             filesTable.splice(j, 1);
-   //             j--;  //Account for splice in loop
-   //             break;
-   //          }
-   //       }
-   //    }
-   // }
 
    //If user was not found, respond with an error message
    if(foundUser == true){
@@ -171,7 +153,22 @@ app.post('/disconnect', function (req, res) {
 //Search and return file
 app.get('/search', function (req, res) {
    
+   //Set query string
+   var keyword = req.body.keyword
    console.log('Client has queried');
+
+   //Array of files that contain keyword
+   var fileList;
+
+   //Search filenames and descriptions for keyword
+   for(var i = 0; i < filesTable.length; i++){
+      if(filesTable[i].fileName.includes(keyword) || filesTable[i].description.includes(keyword)){
+         fileList.push(filesTable[i]);
+         console.log('Found a file');
+      }
+   }
+
+   res.json(fileList);
    
 })
 
