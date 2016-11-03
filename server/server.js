@@ -47,7 +47,7 @@ function printFilesTable() {
 
 //Allow client to connect, store user and file information
 app.post('/register', function(req, res) {
-  console.log("hit");
+   console.log("hit");
 
    //Store the username, hostname, and connection speed
    var userName = req.body.userName;
@@ -78,6 +78,7 @@ app.post('/register', function(req, res) {
    // var fileNames = req.body.fileNames;
    // var descriptions = req.body.descriptions;
 
+   //Array of files with filename and description fields
    var files = req.body.files;
 
    //Push userName, hostName, and connSpeed to users table
@@ -112,8 +113,7 @@ app.post('/disconnect', function (req, res) {
    var userName = req.body.userName;
    var hostName = req.body.hostName;
    var connSpeed = req.body.connSpeed;
-   var fileNames = req.body.fileNames;
-   var descriptions = req.body.descriptions;
+   var files = req.body.files;
 
    //Boolean to tell if user was found
    var foundUser = false;
@@ -127,12 +127,10 @@ app.post('/disconnect', function (req, res) {
       }
    }
 
-   //Remove files associated with this user
-   //DO WE NEED TO DO THIS STEP??
    if(foundUser){
-      for(var i = 0; i < fileNames.length; i++){
+      for(var i = 0; i < files.length; i++){
          for(var j = 0; j < filesTable.length; j++){
-            if(fileNames[i] == filesTable[j].fileName && descriptions[i] == filesTable[j].description){
+            if(files[i].filename == filesTable[j].fileName && files[i].description == filesTable[j].description){
                filesTable.splice(j, 1);
                j--;  //Account for splice in loop
                break;
@@ -140,6 +138,19 @@ app.post('/disconnect', function (req, res) {
          }
       }
    }
+
+   //Remove files associated with this user
+   // if(foundUser){
+   //    for(var i = 0; i < fileNames.length; i++){
+   //       for(var j = 0; j < filesTable.length; j++){
+   //          if(fileNames[i] == filesTable[j].fileName && descriptions[i] == filesTable[j].description){
+   //             filesTable.splice(j, 1);
+   //             j--;  //Account for splice in loop
+   //             break;
+   //          }
+   //       }
+   //    }
+   // }
 
    //If user was not found, respond with an error message
    if(foundUser == true){
