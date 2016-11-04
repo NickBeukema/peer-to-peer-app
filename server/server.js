@@ -22,11 +22,19 @@ function User(userName, hostName, connSpeed) {
    this.connSpeed = connSpeed;
 }
 
+
 //File constructor
-function File(fileName, description) {
+function File(fileName, description, owner) {
    this.fileName = fileName;
    this.description = description;
+   this.owner = description;
 }
+
+File.prototype = {
+   toString: function(){
+      return this.fileName + ": " + this.description;
+   }
+};
 
 //Function to print the users table
 function printUsersTable() {
@@ -50,29 +58,29 @@ app.post('/register', function(req, res) {
    //console.log("hit");
 
    //Store the username, hostname, and connection speed
-   var userName = req.body.userName;
-   var hostName = req.body.hostName;
-   var connSpeed = req.body.connSpeed;
+   var userName = req.body.username;
+   var hostName = req.body.hostname;
+   var connSpeed = req.body.connectionSpeed;
 
    //If client didn't send the required information, respond with missing info
-   if(userName == undefined){
+   if(userName === undefined){
       res.json('Missing username');
       console.log('\nClient failed to join');
       return;
    }
-   else if(hostName == undefined){
+   else if(hostName === undefined){
       res.json('Missing hostname');
       console.log('\nClient failed to join');
       return;
    }
-   else if(connSpeed == undefined){
+   else if(connSpeed === undefined){
       res.json('Missing connection speed');
       console.log('\nClient failed to join');
       return;
    }
 
    //Else, let the client join
-   console.log('\nClient ' + userName + ' has joined.')
+   console.log('\nClient ' + userName + ' has joined.');
 
    //Array of files with filename and description fields
    var files = req.body.files;
@@ -83,7 +91,7 @@ app.post('/register', function(req, res) {
 
    //Push files and descriptions to files table
    for(var i = 0; i < files.length; i++){
-      var file = new File(files[i].filename, files[i].description);
+      var file = new File(files[i].fileName, files[i].description, user);
       filesTable.push(file);
    }
 
@@ -92,7 +100,9 @@ app.post('/register', function(req, res) {
    printFilesTable();
 
    //Send response back to client
-   res.json('Connected');
+   res.json({
+      "status": "connected"
+   });
 
 });
 
@@ -154,21 +164,26 @@ app.post('/disconnect', function (req, res) {
 app.get('/search', function (req, res) {
 
    //Set query string
-   var keyword = req.body.keyword
+   var keyword = req.body.keyword;
    console.log('Client has queried');
+   //
+   // //Array of files that contain keyword
+   // var fileList;
+   //
+   // //Search filenames and descriptions for keyword
+   // for(var i = 0; i < filesTable.length; i++){
+   //    if(filesTable[i].fileName.includes(keyword) || filesTable[i].description.includes(keyword)){
+   //       fileList.push(filesTable[i]);
+   //       console.log('Found a file');
+   //    }
+   // }
+   //
+   // res.json(fileList);
 
-   //Array of files that contain keyword
-   var fileList;
 
-   //Search filenames and descriptions for keyword
-   for(var i = 0; i < filesTable.length; i++){
-      if(filesTable[i].fileName.includes(keyword) || filesTable[i].description.includes(keyword)){
-         fileList.push(filesTable[i]);
-         console.log('Found a file');
-      }
-   }
-
-   res.json(fileList);
+   res.json(filesTable.filter(function(file){
+      return file.description.includes(keyword);
+   }))
 
 });
 

@@ -10,12 +10,21 @@ var options = {
     user: 'jack',
     pass: "test",
     tlsOnly: false,
-    getInitialCwd: function(){
-        return options.cwd;
+    getInitialCwd: function(connection, callback){
+        var userDir = './' + connection.username;
+
+        fs.exists(userDir, function(exists){
+            if (exists){
+                callback(null, userDir);
+            } else {
+                fs.mkdir(userDir, function(err){
+                    callback(err, userDir);
+                })
+            }
+        });
     },
     getRoot: function(connection, callback){
-        var username = connection.username;
-        fs.realpath(root, callback);
+        callback(null, process.cwd() + '/' + connection.username);
     }
 };
 
@@ -25,13 +34,13 @@ module.exports = {
     },
     server: function(customOptions){
         customOptions = customOptions || {};
-        console.log(customOptions);
+
         Object.keys(options).forEach(function(key){
             if (!customOptions.hasOwnProperty(key)){
                 customOptions[key] = options[key];
             }
         });
-        console.log(customOptions);
+
         var server = new Server(customOptions.host, customOptions);
 
         server.on('client:connected', function(connection){

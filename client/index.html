@@ -18,7 +18,7 @@
 
             <div class="form-group has-feedback has-warning">
                 <label for="tracker-port">tracker port</label>
-                <input id="tracker-port" placeholder="23"/>
+                <input id="tracker-port" placeholder="23" type="number" min="1" max="65535"/>
             </div>
             <label for="username">username</label>
             <input id="username" placeholder="joe"/>
@@ -90,17 +90,57 @@
 
 </div>
 <script src="js/index.js"></script>
+
 <script>
+    var app = {};
     var port = 7710;
-
     var server = require("./js/ftps").server({port: port});
-    //var client = require("./js/ftpc").client({port: port});
+    var client = require("./js/ftpc").client({port: port});
 
-    document.getElementById("connect").addEventListener("click", function(event){
+    var trackerAddress = document.getElementById("tracker-address");
+    var trackerPort = document.getElementById("tracker-port");
+    var username = document.getElementById("username");
+    var hostname = document.getElementById("hostname");
+    var connectionSpeed = document.getElementById("speed");
+
+
+    var connect = document.getElementById("connect");
+    connect.addEventListener("click", function(event){
         console.log("!!!");
+        var tracker = {
+            "address": trackerAddress.value || "127.0.0.1",
+            "port": trackerPort.value || 6548
+        };
+
+        var user = {
+            "username": username.value || "jack",
+            "hostname": hostname.value || "127.0.0.1",
+            "connectionSpeed": connectionSpeed.value || "fiber",
+            "files": [{"filename": "dd.txt", "description": "My file of the abcs"}, {"filename": "coffde.rb", "description": "My ruby code"}]
+        };
+
+        registerWithServer(tracker, user, function(res){
+            console.log(res);
+            if (res.status === "connected"){
+                app.tracker = tracker;
+                app.user = user;
+            }
+        });
     });
 
-    window.app = {};
+    var search = document.getElementById("search-keyword");
+    search.addEventListener("keyup", function(event){
+        if (event.keyCode === 13 || event.which === 13){
+            console.log("Searching for '" + this.value + "'");
+            searchServer(app.tracker, this.value, updateSearchResults);
+        }
+    });
+
+    function updateSearchResults(res){
+        console.log("Search results");
+        console.log(res);
+    }
+
 </script>
 
 </body>

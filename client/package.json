@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "main": "./main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electron . 1234",
     "concurrent": "./node_modules/.bin/electron main.js 7710 | ./node_modules/.bin/electron main.js 7711"
   },
   "devDependencies": {
