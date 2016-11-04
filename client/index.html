@@ -43,37 +43,38 @@
             <input id="search-keyword"/>
 
             <h3>Search Results</h3>
-            <div id="search-results">
+            <div>
                 <table class="table table-striped" style="width: 100%;">
                     <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Speed</th>
-                        <th>Hostname</th>
-                        <th>File Name</th>
-                    </tr>
+                        <tr>
+                            <th>#</th>
+                            <th>Speed</th>
+                            <th>Hostname</th>
+                            <th>File Name</th>
+                        </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Ethernet</td>
-                        <td>123.123.123.123</td>
-                        <td>test.txt</td>
-                    </tr>
 
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Ethernet</td>
-                        <td>123.123.123.123</td>
-                        <td>helloworld.txt</td>
-                    </tr>
+                    <tbody id="search-results">
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Ethernet</td>
+                            <td>123.123.123.123</td>
+                            <td>test.txt</td>
+                        </tr>
 
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>Ethernet</td>
-                        <td>123.123.123.123</td>
-                        <td>nope.txt</td>
-                    </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Ethernet</td>
+                            <td>123.123.123.123</td>
+                            <td>helloworld.txt</td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Ethernet</td>
+                            <td>123.123.123.123</td>
+                            <td>nope.txt</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -137,8 +138,15 @@
     });
 
     function updateSearchResults(res){
+        var html = "";
         console.log("Search results");
-        console.log(res);
+        var i = 1;
+        res.forEach(function(file){
+            console.log(file);
+            html += "<tr><th scope='row'>" + i + 1 + "</th><td>" + file.speed + "</td><td>" + file.hostname + "<td>" + file.filename + "</td></td></tr>";
+            i++;
+        });
+        document.getElementById("search-results").innerHTML = html;
     }
 
 </script>

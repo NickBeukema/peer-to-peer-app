@@ -24,10 +24,11 @@ function User(userName, hostName, connSpeed) {
 
 
 //File constructor
-function File(fileName, description, owner) {
-   this.fileName = fileName;
+function File(fileName, description, hostname, speed) {
+   this.filename = fileName;
    this.description = description;
-   this.owner = description;
+   this.hostname = hostname;
+   this.speed = speed;
 }
 
 File.prototype = {
@@ -58,17 +59,17 @@ app.post('/register', function(req, res) {
    //console.log("hit");
 
    //Store the username, hostname, and connection speed
-   var userName = req.body.username;
-   var hostName = req.body.hostname;
+   var username = req.body.username;
+   var hostname = req.body.hostname;
    var connSpeed = req.body.connectionSpeed;
 
    //If client didn't send the required information, respond with missing info
-   if(userName === undefined){
+   if(username === undefined){
       res.json('Missing username');
       console.log('\nClient failed to join');
       return;
    }
-   else if(hostName === undefined){
+   else if(hostname === undefined){
       res.json('Missing hostname');
       console.log('\nClient failed to join');
       return;
@@ -80,18 +81,18 @@ app.post('/register', function(req, res) {
    }
 
    //Else, let the client join
-   console.log('\nClient ' + userName + ' has joined.');
+   console.log('\nClient ' + username + ' has joined.');
 
    //Array of files with filename and description fields
    var files = req.body.files;
 
    //Push userName, hostName, and connSpeed to users table
-   var user = new User(userName, hostName, connSpeed);
+   var user = new User(username, hostname, connSpeed);
    usersTable.push(user);
 
    //Push files and descriptions to files table
    for(var i = 0; i < files.length; i++){
-      var file = new File(files[i].fileName, files[i].description, user);
+      var file = new File(files[i].filename, files[i].description, hostname, connSpeed);
       filesTable.push(file);
    }
 
@@ -123,7 +124,7 @@ app.post('/disconnect', function (req, res) {
    var i;
    //Remove username, hostname, and connection speed
    for(i = 0; i < usersTable.length; i++){
-      if(userName == usersTable[i].userName && hostName == usersTable[i].hostName && connSpeed == usersTable[i].connSpeed){
+      if(userName == usersTable[i].username && hostName == usersTable[i].hostname && connSpeed == usersTable[i].connSpeed){
          usersTable.splice(i, 1);
          foundUser = true;
          break;
@@ -162,24 +163,9 @@ app.post('/disconnect', function (req, res) {
 
 //Search and return file
 app.get('/search', function (req, res) {
-
    //Set query string
    var keyword = req.body.keyword;
    console.log('Client has queried');
-   //
-   // //Array of files that contain keyword
-   // var fileList;
-   //
-   // //Search filenames and descriptions for keyword
-   // for(var i = 0; i < filesTable.length; i++){
-   //    if(filesTable[i].fileName.includes(keyword) || filesTable[i].description.includes(keyword)){
-   //       fileList.push(filesTable[i]);
-   //       console.log('Found a file');
-   //    }
-   // }
-   //
-   // res.json(fileList);
-
 
    res.json(filesTable.filter(function(file){
       return file.description.includes(keyword);
