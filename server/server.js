@@ -16,16 +16,16 @@ var usersTable = [];
 var filesTable = [];
 
 //User constructor
-function User(userName, hostName, connSpeed) {
-   this.userName = userName;
-   this.hostName = hostName;
+function User(username, hostname, connSpeed) {
+   this.username = username;
+   this.hostname = hostname;
    this.connSpeed = connSpeed;
 }
 
 
 //File constructor
-function File(fileName, description, hostname, speed) {
-   this.filename = fileName;
+function File(filename, description, hostname, speed) {
+   this.filename = filename;
    this.description = description;
    this.hostname = hostname;
    this.speed = speed;
@@ -33,7 +33,7 @@ function File(fileName, description, hostname, speed) {
 
 File.prototype = {
    toString: function(){
-      return this.fileName + ": " + this.description;
+      return this.filename + ": " + this.description;
    }
 };
 
@@ -41,7 +41,7 @@ File.prototype = {
 function printUsersTable() {
    console.log('\nUsers Table:');
    for(var i = 0; i < usersTable.length; i++){
-      console.log('User ' + i + ': ' + usersTable[i].userName + ', ' + usersTable[i].hostName + ', ' + usersTable[i].connSpeed);
+      console.log('User ' + i + ': ' + usersTable[i].username + ', ' + usersTable[i].hostname + ', ' + usersTable[i].connSpeed);
    }
 }
 
@@ -49,7 +49,7 @@ function printUsersTable() {
 function printFilesTable() {
    console.log('\nFiles Table:');
    for(var i = 0; i < filesTable.length; i++){
-      console.log('File ' + i + ': ' + filesTable[i].fileName + ', ' + filesTable[i].description);
+      console.log('File ' + i + ': ' + filesTable[i].filename + ', ' + filesTable[i].description);
    }
 }
 
@@ -86,7 +86,7 @@ app.post('/register', function(req, res) {
    //Array of files with filename and description fields
    var files = req.body.files;
 
-   //Push userName, hostName, and connSpeed to users table
+   //Push username, hostname, and connSpeed to users table
    var user = new User(username, hostname, connSpeed);
    usersTable.push(user);
 
@@ -112,9 +112,9 @@ app.post('/register', function(req, res) {
 app.post('/disconnect', function (req, res) {
 
    //Set the username, hostname, and connection speed
-   var userName = req.body.userName;
-   var hostName = req.body.hostName;
-   var connSpeed = req.body.connSpeed;
+   var username = req.body.username;
+   var hostname = req.body.hostname;
+   var connSpeed = req.body.connectionSpeed;
 
    //Array of files with filename and description fields
    var files = req.body.files;
@@ -124,7 +124,7 @@ app.post('/disconnect', function (req, res) {
    var i;
    //Remove username, hostname, and connection speed
    for(i = 0; i < usersTable.length; i++){
-      if(userName == usersTable[i].username && hostName == usersTable[i].hostname && connSpeed == usersTable[i].connSpeed){
+      if(username == usersTable[i].username && hostname == usersTable[i].hostname && connSpeed == usersTable[i].connSpeed){
          usersTable.splice(i, 1);
          foundUser = true;
          break;
@@ -136,7 +136,7 @@ app.post('/disconnect', function (req, res) {
    if(foundUser){
       for(i = 0; i < files.length; i++){
          for(var j = 0; j < filesTable.length; j++){
-            if(files[i].filename == filesTable[j].fileName && files[i].description == filesTable[j].description){
+            if(files[i].filename == filesTable[j].fileame && files[i].description == filesTable[j].description){
                filesTable.splice(j, 1);
                j--;  //Account for splice in loop
                break;
@@ -147,11 +147,11 @@ app.post('/disconnect', function (req, res) {
 
    //If user was not found, respond with an error message
    if(foundUser == true){
-      console.log('\nUser ' + userName + ' has disconnected.');
+      console.log('\nUser ' + username + ' has disconnected.');
       res.json('Disconnected');
    }
    else{
-      console.log('\nUser ' + userName + ' not found.');
+      console.log('\nUser ' + username + ' not found.');
       res.json('User not found');
    }
 
@@ -163,9 +163,17 @@ app.post('/disconnect', function (req, res) {
 
 //Search and return file
 app.get('/search', function (req, res) {
+   require('url').parse(req.url).query
+
    //Set query string
-   var keyword = req.body.keyword;
-   console.log('Client has queried');
+   //Supposedly using req.body is bad practice in .get
+   //Postman doesn't even allow you to include a body when calling .get
+   var keyword = JSON.parse(req.query.keyword);
+   console.log('Client searched for ' + keyword);
+
+   console.log(filesTable.filter(function(file){
+      return file.description.includes(keyword);
+   }))
 
    res.json(filesTable.filter(function(file){
       return file.description.includes(keyword);
