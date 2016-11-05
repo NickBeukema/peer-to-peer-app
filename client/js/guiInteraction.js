@@ -1,7 +1,7 @@
 var app = {};
 var port = 7710;
-var server = require("./ftps").server({port: port});
-var client = require("./ftpc").client({port: port});
+var server = require("./js/ftps").server({port: port});
+var client = require("./js/ftpc").client({port: port});
 
 var trackerAddress = document.getElementById("tracker-address");
 var trackerPort = document.getElementById("tracker-port");
