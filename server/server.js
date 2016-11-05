@@ -24,11 +24,12 @@ function User(username, hostname, connSpeed) {
 
 
 //File constructor
-function File(filename, description, hostname, speed) {
+function File(filename, description, hostname, speed, owner) {
    this.filename = filename;
    this.description = description;
    this.hostname = hostname;
    this.speed = speed;
+   this.owner = owner;
 }
 
 File.prototype = {
@@ -92,7 +93,7 @@ app.post('/register', function(req, res) {
 
    //Push files and descriptions to files table
    for(var i = 0; i < files.length; i++){
-      var file = new File(files[i].filename, files[i].description, hostname, connSpeed);
+      var file = new File(files[i].filename, files[i].description, hostname, connSpeed, username);
       filesTable.push(file);
    }
 
