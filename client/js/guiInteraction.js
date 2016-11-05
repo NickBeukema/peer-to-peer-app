@@ -11,6 +11,16 @@ var connectionSpeed = document.getElementById("speed");
 
 var fs = require('fs');
 
+var enums = {
+  "disconnected": 0,
+  "connected": 1
+}
+
+var disconnected = enums.disonnected;
+var connected = enums.connected;
+
+app.status = disconnected;
+
 function getFilesForUser(username, callback) {
   fs.readFile(username + '/filelist.json', 'utf8', function(err, fd) {
     if (err) { throw err; }
@@ -36,7 +46,7 @@ var connect = document.getElementById("connect");
 connect.addEventListener("click", function(event){
   var self = this;
 
-  if(self.classList.contains("btn-danger")){
+  if(app.status === connected){
     self.classList.remove("btn-danger");
 
     //disconnect from server
@@ -45,6 +55,7 @@ connect.addEventListener("click", function(event){
 
     disconnectFromServer(app.tracker, app.user, function(res){
       console.log(res);
+      app.status = disconnected;
     });
     return;
   }
@@ -77,6 +88,7 @@ connect.addEventListener("click", function(event){
         self.classList.add("btn-danger");
         self.classList.remove("btn-success");
         self.innerText = "disconnect";
+        app.status = connected;
 
       }, 500);
       self.innerText = "connected!";
