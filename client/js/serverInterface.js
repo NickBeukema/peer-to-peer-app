@@ -13,11 +13,7 @@ var request = require('request');
 var hostServerAddress = "127.0.0.1";
 var hostPort = 6548;
 
-function registerWithServer(tracker, body, callback) {
-
-  var baseUrl = "http://" + tracker.address + ":" + tracker.port + "/";
-  var uri = "/register";
-
+function postToServer(baseUrl, uri, body, callback) {
   var options = {
     uri: uri,
     baseUrl: baseUrl,
@@ -37,27 +33,25 @@ function registerWithServer(tracker, body, callback) {
   });
 }
 
+function registerWithServer(tracker, body, callback) {
+  var baseUrl = "http://" + tracker.address + ":" + tracker.port + "/";
+  var uri = "/register";
+
+  postToServer(baseUrl, uri, body, callback);
+}
+
+function uploadFilesToServer(tracker, body, callback) {
+  var baseUrl = "http://" + tracker.address + ":" + tracker.port + "/";
+  var uri = "/upload-files";
+
+  postToServer(baseUrl, uri, body, callback);
+}
+
 function disconnectFromServer(tracker, user, callback) {
   var baseUrl = "http://" + tracker.address + ":" + tracker.port + "/";
   var uri = "/disconnect";
 
-  var options = {
-    uri: uri,
-    baseUrl: baseUrl,
-    method: "POST",
-    json: true,
-    body: { username: user.username }
-  };
-
-  request(options, function(error, response, body) {
-    if (error) {
-      console.log(error);
-    } else if (response.statusCode === 200) {
-      callback(body);
-      console.log(body);
-    }
-  });
-
+  postToServer(baseUrl, uri, body, callback);
 }
 
 function searchServer(tracker, keyword, callback){

@@ -9,6 +9,29 @@ var username = document.getElementById("username");
 var hostname = document.getElementById("hostname");
 var connectionSpeed = document.getElementById("speed");
 
+var fs = require('fs');
+
+function getFilesForUser(username, callback) {
+  fs.readFile(username + '/filelist.json', 'utf8', function(err, fd) {
+    if (err) { throw err; }
+    
+    callback(JSON.parse(fd));
+  });
+}
+
+function uploadFiles(username) {
+  var files = getFilesForUser(username, function(fileList){
+    var body = {
+      username: username,
+      files: fileList.files
+    };
+
+    uploadFilesToServer(app.tracker, body, function(resp){
+      console.log(resp);
+    });
+  });
+}
+
 var connect = document.getElementById("connect");
 connect.addEventListener("click", function(event){
     var self = this;
@@ -29,17 +52,18 @@ connect.addEventListener("click", function(event){
     self.classList.add("btn-info");
     self.classList.remove("btn-primary");
 
-    console.log("!!!");
     var tracker = {
         "address": trackerAddress.value || "127.0.0.1",
         "port": trackerPort.value || 6548
     };
 
+    var name = username.value || "jack";
+
+
     var user = {
-        "username": username.value || "jack",
+        "username": name,
         "hostname": hostname.value || "127.0.0.1",
-        "connectionSpeed": connectionSpeed.value || "fiber",
-        "files": [{"filename": "dd.txt", "description": "My file of the abcs"}, {"filename": "coffde.rb", "description": "My ruby code"}]
+        "connectionSpeed": connectionSpeed.value || "fiber"
     };
 
     this.innerText = "connecting to " + tracker.address + ":" + tracker.port;
@@ -53,10 +77,13 @@ connect.addEventListener("click", function(event){
                 self.classList.add("btn-danger");
                 self.classList.remove("btn-success");
                 self.innerText = "disconnect";
+
             }, 500);
             self.innerText = "connected!";
             app.tracker = tracker;
             app.user = user;
+
+            uploadFiles(user.username);
         }
     });
 });

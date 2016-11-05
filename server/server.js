@@ -88,13 +88,10 @@ app.post('/register', function(req, res) {
    //Else, let the client join
    console.log('\nClient ' + username + ' has joined.');
 
-   //Array of files with filename and description fields
-   var files = req.body.files;
 
    var user = lookupUser(username);
    // Check if user already exists, if they do, update their details
-   // Their file list is treated as authoritative, so if it does
-   // not exist in this request, we delete it
+   // also clear out files for people who come back
    if(user) {
      user.hostname = hostname;
      user.connSpeed = connSpeed;
@@ -106,11 +103,6 @@ app.post('/register', function(req, res) {
      usersTable.push(user);
    }
 
-   //Push files and descriptions to files table
-   for(var i = 0; i < files.length; i++){
-      var file = new File(files[i].filename, files[i].description, hostname, connSpeed, username);
-      filesTable.push(file);
-   }
 
    //Print Users and Files tables to console
    printUsersTable();
@@ -123,6 +115,32 @@ app.post('/register', function(req, res) {
 
 });
 
+app.post('/upload-files', function (req, res) {
+
+  // Get username
+  var user = lookupUser(req.body.username);
+
+  if(!user) {
+    res.json('User is not register, please register before uploading files');
+    console.log('\nUsername ' + username + ' not found.');
+    return;
+  }
+
+  // Array of files with filename and description fields
+  var files = req.body.files;
+
+  // Push files and descriptions to files table
+  for(var i = 0; i < files.length; i++) {
+    console.log("Uploading file: " + files[i].filename);
+    var file = new File(files[i].filename, files[i].description, user.hostname, user.connSpeed, user.username);
+    filesTable.push(file);
+  }
+
+  //Print Users and Files tables to console
+  printUsersTable();
+  printFilesTable();
+
+});
 
 //Disconnect from client
 app.post('/disconnect', function (req, res) {
