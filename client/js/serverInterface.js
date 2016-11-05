@@ -51,6 +51,10 @@ function disconnectFromServer(tracker, user, callback) {
   var baseUrl = "http://" + tracker.address + ":" + tracker.port + "/";
   var uri = "/disconnect";
 
+  var body = {
+    username: user.username
+  }
+
   postToServer(baseUrl, uri, body, callback);
 }
 
