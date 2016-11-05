@@ -69,7 +69,7 @@ function searchServer(tracker, keyword, callback){
     baseUrl: baseUrl,
     method: "GET",
     json: true,
-    body: {"keyword": keyword}
+    qs: { "keyword": keyword }
   };
 
   request(options, function(err, res, body){

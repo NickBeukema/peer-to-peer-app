@@ -158,21 +158,17 @@ app.post('/disconnect', function (req, res) {
 
 //Search and return file
 app.get('/search', function (req, res) {
-   require('url').parse(req.url).query
 
-   //Set query string
-   //Supposedly using req.body is bad practice in .get
-   //Postman doesn't even allow you to include a body when calling .get
-   var keyword = JSON.parse(req.query.keyword);
+   debugger;
+   var keyword = req.query.keyword;
    console.log('Client searched for ' + keyword);
 
-   console.log(filesTable.filter(function(file){
+   var files = filesTable.filter(function(file){
       return file.description.includes(keyword);
-   }))
+   });
 
-   res.json(filesTable.filter(function(file){
-      return file.description.includes(keyword);
-   }))
+   console.log(files);
+   res.json(files);
 
 });
 

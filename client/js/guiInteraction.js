@@ -75,7 +75,7 @@ function updateSearchResults(res){
     var i = 1;
     res.forEach(function(file){
         console.log(file);
-        html += "<tr><th scope='row'>" + i + 1 + "</th><td>" + file.speed + "</td><td>" + file.hostname + "<td>" + file.filename + "</td></td></tr>";
+        html += "<tr><th scope='row'>" + i + "</th><td>" + file.speed + "</td><td>" + file.hostname + "<td>" + file.filename + "</td><td>" + file.description + "</td></tr>";
         i++;
     });
     document.getElementById("search-results").innerHTML = html;
