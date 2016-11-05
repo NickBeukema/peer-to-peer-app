@@ -54,6 +54,10 @@ function printFilesTable() {
    }
 }
 
+function lookupUser(username) {
+  return usersTable.find(function(user){ return user.username === username});
+}
+
 
 //Allow client to connect, store user and file information
 app.post('/register', function(req, res) {
@@ -87,9 +91,20 @@ app.post('/register', function(req, res) {
    //Array of files with filename and description fields
    var files = req.body.files;
 
-   //Push username, hostname, and connSpeed to users table
-   var user = new User(username, hostname, connSpeed);
-   usersTable.push(user);
+   var user = lookupUser(username);
+   // Check if user already exists, if they do, update their details
+   // Their file list is treated as authoritative, so if it does
+   // not exist in this request, we delete it
+   if(user) {
+     user.hostname = hostname;
+     user.connSpeed = connSpeed;
+
+     filesTable = filesTable.filter(function(file){ return file.owner != username});
+   } else {
+     //Push username, hostname, and connSpeed to users table
+     user = new User(username, hostname, connSpeed);
+     usersTable.push(user);
+   }
 
    //Push files and descriptions to files table
    for(var i = 0; i < files.length; i++){
@@ -116,9 +131,7 @@ app.post('/disconnect', function (req, res) {
   var username = req.body.username;
 
   // Find user within the usersTable
-  var userToRemove = usersTable.find(function(user) {
-    return user.username === username;
-  });
+  var userToRemove = lookupUser(username);
 
   // If the user existed in the table, begin disconnecting
   if(userToRemove) {
