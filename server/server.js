@@ -112,52 +112,33 @@ app.post('/register', function(req, res) {
 //Disconnect from client
 app.post('/disconnect', function (req, res) {
 
-   //Set the username, hostname, and connection speed
-   var username = req.body.username;
-   var hostname = req.body.hostname;
-   var connSpeed = req.body.connectionSpeed;
+  //Set the username, hostname, and connection speed
+  var username = req.body.username;
 
-   //Array of files with filename and description fields
-   var files = req.body.files;
+  // Find user within the usersTable
+  var userToRemove = usersTable.find(function(user) {
+    return user.username === username;
+  });
 
-   //Boolean to tell if user was found
-   var foundUser = false;
-   var i;
-   //Remove username, hostname, and connection speed
-   for(i = 0; i < usersTable.length; i++){
-      if(username == usersTable[i].username && hostname == usersTable[i].hostname && connSpeed == usersTable[i].connSpeed){
-         usersTable.splice(i, 1);
-         foundUser = true;
-         break;
-      }
-   }
+  // If the user existed in the table, begin disconnecting
+  if(userToRemove) {
 
-   //Remove files associated with user
-   //If user copies a file from its peer, then leaves, this might try to delete that file from files table...
-   if(foundUser){
-      for(i = 0; i < files.length; i++){
-         for(var j = 0; j < filesTable.length; j++){
-            if(files[i].filename == filesTable[j].fileame && files[i].description == filesTable[j].description){
-               filesTable.splice(j, 1);
-               j--;  //Account for splice in loop
-               break;
-            }
-         }
-      }
-   }
+    // Remove user from usersTabler
+    usersTable.splice(usersTable.indexOf(userToRemove),1);
 
-   //If user was not found, respond with an error message
-   if(foundUser == true){
-      console.log('\nUser ' + username + ' has disconnected.');
-      res.json('Disconnected');
-   }
-   else{
-      console.log('\nUser ' + username + ' not found.');
-      res.json('User not found');
-   }
+    // Filter out all of the users file and assign it to the filesTable
+    filesTable = filesTable.filter(function(file){ return file.owner != username});
 
-   printUsersTable();
-   printFilesTable();
+    //If user was not found, respond with an error message
+    console.log('\nUser ' + username + ' has disconnected.');
+    res.json('Disconnected');
+  } else {
+    console.log('\nUser ' + username + ' not found.');
+    res.json('User not found');
+  }
+
+  printUsersTable();
+  printFilesTable();
 
 });
 
