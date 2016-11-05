@@ -55,7 +55,8 @@ connect.addEventListener("click", function(event){
 
     disconnectFromServer(app.tracker, app.user, function(res){
       console.log(res);
-      app.status = disconnected;
+      updateGUI(disconnected);
+      openServerInfoSection();
     });
     return;
   }
@@ -88,7 +89,8 @@ connect.addEventListener("click", function(event){
         self.classList.add("btn-danger");
         self.classList.remove("btn-success");
         self.innerText = "disconnect";
-        app.status = connected;
+        updateGUI(connected);
+        closeServerInfoSection();
 
       }, 500);
       self.innerText = "connected!";
@@ -117,7 +119,7 @@ function updateSearchResults(res){
   console.log("Search results");
   var i = 1;
   res.forEach(function(file){
-    html += "<tr><th scope='row'>" + i + "</th><td>" + file.speed + "</td><td>" + file.hostname + "<td>" + file.filename + "</td><td>" + file.description + "</td><td><button class='btn app-download-button' data-hostname='" + file.hostname + "' data-filename='" + file.filename + "'>Download</td></tr>";
+    html += "<tr class='app-search-row'><th scope='row'>" + i + "</th><td>" + file.speed + "</td><td>" + file.hostname + "<td>" + file.filename + "</td><td>" + file.description + "</td><td><button class='btn app-download-button' data-hostname='" + file.hostname + "' data-filename='" + file.filename + "'>Download</td></tr>";
     i++;
   });
   document.getElementById("search-results").innerHTML = html;
@@ -132,3 +134,36 @@ function updateSearchResults(res){
 
 }
 
+var serverInfoSection = document.getElementsByClassName('app-server-info')[0];
+var connectedSection = document.getElementsByClassName('app-connected-section')[0];
+
+function updateGUI(connStatus) {
+  app.status = connStatus;
+
+  if(app.status === connected) {
+    closeServerInfoSection();
+    serverInfoSection.classList.add('connected');
+    connectedSection.classList.remove('collapsed');
+  } else if(app.status === disconnected) {
+    openServerInfoSection();
+    serverInfoSection.classList.remove('connected');
+    connectedSection.classList.add('collapsed');
+  }
+}
+
+function toggleServerInfoSection() {
+  serverInfoSection.classList.toggle('collapsed');
+}
+
+function openServerInfoSection() {
+  serverInfoSection.classList.remove('collapsed');
+}
+
+function closeServerInfoSection() {
+  serverInfoSection.classList.add('collapsed');
+}
+
+var toggleServerInfoButton = document.getElementsByClassName('app-toggle-server-info')[0];
+toggleServerInfoButton.addEventListener('click', function(event) {
+  toggleServerInfoSection();
+});
