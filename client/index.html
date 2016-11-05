@@ -1,190 +1,107 @@
 <!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <title>Peer to Peer Client</title>
     <link href="./node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css"/>
     <link href="css/index.css" rel="stylesheet" type="text/css"/>
-</head>
-<body>
-<div id="main" class="container-fluid">
-    <div id="server-info">
+  </head>
+  <body>
+    <div id="main" class="container-fluid">
+      <div id="server-info">
         <h2>Server info</h2>
         <div class="container">
-            <div class="form-group">
-                <label for="tracker-address" class="control-label">tracker address </label>
-                <input id="tracker-address" class="form-control" placeholder="127.0.0.1"/>
-            </div>
+          <div class="form-group">
+            <label for="tracker-address" class="control-label">tracker address </label>
+            <input id="tracker-address" class="form-control" placeholder="127.0.0.1"/>
+          </div>
 
-            <div class="form-group">
-                <label for="tracker-port">tracker port</label>
-                <input id="tracker-port" class="form-control" placeholder="23" type="number" min="1" max="65535"/>
-            </div>
+          <div class="form-group">
+            <label for="tracker-port">tracker port</label>
+            <input id="tracker-port" class="form-control" placeholder="23" type="number" min="1" max="65535"/>
+          </div>
 
-            <div class="form-group">
-                <label for="username">username</label>
-                <input id="username" class="form-control" placeholder="joe"/>
+          <div class="form-group">
+            <label for="username">username</label>
+            <input id="username" class="form-control" placeholder="joe"/>
 
-            </div>
+          </div>
 
-            <div class="form-group">
-                <label for="hostname">your hostname</label>
-                <input id="hostname" class="form-control" placeholder="anon"/>
-            </div>
+          <div class="form-group">
+            <label for="hostname">your hostname</label>
+            <input id="hostname" class="form-control" placeholder="anon"/>
+          </div>
 
-            <div class="form-group">
-                <label for="speed">Connection Speed</label>
-                <select id="speed" class="form-control">
-                    <option value="fiber" selected>Fiber</option>
-                    <option value="ethernet">Ethernet</option>
-                    <option value="dial-up">Dial-up</option>
-                </select>
-            </div>
-            <button id="connect" class="btn btn-primary btn-lg btn-block">connect to tracker</button>
+          <div class="form-group">
+            <label for="speed">Connection Speed</label>
+            <select id="speed" class="form-control">
+              <option value="fiber" selected>Fiber</option>
+              <option value="ethernet">Ethernet</option>
+              <option value="dial-up">Dial-up</option>
+            </select>
+          </div>
+          <button id="connect" class="btn btn-primary btn-lg btn-block">connect to tracker</button>
         </div>
 
 
-    </div>
+      </div>
 
-    <div class="input-group">
+      <div class="input-group">
         <h2>Search</h2>
         <div class="input-group">
-            <label for="search-keyword">Keywoard</label>
-            <input id="search-keyword"/>
+          <label for="search-keyword">Keywoard</label>
+          <input id="search-keyword"/>
 
-            <h3>Search Results</h3>
-            <div>
-                <table class="table table-striped" style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Speed</th>
-                            <th>Hostname</th>
-                            <th>File Name</th>
-                        </tr>
-                    </thead>
+          <h3>Search Results</h3>
+          <div>
+            <table class="table table-striped" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Speed</th>
+                  <th>Hostname</th>
+                  <th>File Name</th>
+                </tr>
+              </thead>
 
-                    <tbody id="search-results">
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Ethernet</td>
-                            <td>123.123.123.123</td>
-                            <td>test.txt</td>
-                        </tr>
+              <tbody id="search-results">
+                <tr>
+                  <th scope="row">1</th>
+                  <td>Ethernet</td>
+                  <td>123.123.123.123</td>
+                  <td>test.txt</td>
+                </tr>
 
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Ethernet</td>
-                            <td>123.123.123.123</td>
-                            <td>helloworld.txt</td>
-                        </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>Ethernet</td>
+                  <td>123.123.123.123</td>
+                  <td>helloworld.txt</td>
+                </tr>
 
-                        <tr>
-                            <th scope="row">3</th>
-                            <td>Ethernet</td>
-                            <td>123.123.123.123</td>
-                            <td>nope.txt</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>Ethernet</td>
+                  <td>123.123.123.123</td>
+                  <td>nope.txt</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <h2>FTP</h2>
-    <div class="input-group">
+      <h2>FTP</h2>
+      <div class="input-group">
         <label for="command">Command:</label>
         <input id="command"/>
+      </div>
+      <textarea id="ftp-text" style="width: 100%;"></textarea>
+
+
     </div>
-    <textarea id="ftp-text" style="width: 100%;"></textarea>
+    <script src="js/serverInterface.js"></script>
+    <script src="js/guiInteraction.js"></script>
 
-
-</div>
-<script src="js/index.js"></script>
-
-<script>
-    var app = {};
-    var port = 7710;
-    var server = require("./js/ftps").server({port: port});
-    var client = require("./js/ftpc").client({port: port});
-
-    var trackerAddress = document.getElementById("tracker-address");
-    var trackerPort = document.getElementById("tracker-port");
-    var username = document.getElementById("username");
-    var hostname = document.getElementById("hostname");
-    var connectionSpeed = document.getElementById("speed");
-
-
-
-    var connect = document.getElementById("connect");
-    connect.addEventListener("click", function(event){
-        var self = this;
-
-        if(self.classList.contains("btn-danger")){
-            self.classList.remove("btn-danger");
-
-            //disconnect from server
-            self.classList.add("btn-primary");
-            self.innerText = "connect to tracker";
-            return;
-        }
-
-        self.classList.add("btn-info");
-        self.classList.remove("btn-primary");
-
-        console.log("!!!");
-        var tracker = {
-            "address": trackerAddress.value || "127.0.0.1",
-            "port": trackerPort.value || 6548
-        };
-
-        var user = {
-            "username": username.value || "jack",
-            "hostname": hostname.value || "127.0.0.1",
-            "connectionSpeed": connectionSpeed.value || "fiber",
-            "files": [{"filename": "dd.txt", "description": "My file of the abcs"}, {"filename": "coffde.rb", "description": "My ruby code"}]
-        };
-
-        this.innerText = "connecting to " + tracker.address + ":" + tracker.port;
-
-        registerWithServer(tracker, user, function(res){
-            console.log(res);
-            if (res.status === "connected"){
-                self.classList.remove("btn-info");
-                self.classList.add("btn-success");
-                setTimeout(function(){
-                    self.classList.add("btn-danger");
-                    self.classList.remove("btn-success");
-                    self.innerText = "disconnect";
-                }, 500);
-                self.innerText = "connected!";
-                app.tracker = tracker;
-                app.user = user;
-            }
-        });
-    });
-
-    var search = document.getElementById("search-keyword");
-    search.addEventListener("keyup", function(event){
-        if (event.keyCode === 13 || event.which === 13){
-            console.log("Searching for '" + this.value + "'");
-            searchServer(app.tracker, this.value, updateSearchResults);
-        }
-    });
-
-    function updateSearchResults(res){
-        var html = "";
-        console.log("Search results");
-        var i = 1;
-        res.forEach(function(file){
-            console.log(file);
-            html += "<tr><th scope='row'>" + i + 1 + "</th><td>" + file.speed + "</td><td>" + file.hostname + "<td>" + file.filename + "</td></td></tr>";
-            i++;
-        });
-        document.getElementById("search-results").innerHTML = html;
-    }
-
-</script>
-
-</body>
+  </body>
 </html>
