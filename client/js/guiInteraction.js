@@ -19,6 +19,10 @@ connect.addEventListener("click", function(event){
         //disconnect from server
         self.classList.add("btn-primary");
         self.innerText = "connect to tracker";
+
+        disconnectFromServer(app.tracker, app.user, function(res){
+          console.log(res);
+        });
         return;
     }
 

@@ -37,6 +37,29 @@ function registerWithServer(tracker, body, callback) {
   });
 }
 
+function disconnectFromServer(tracker, user, callback) {
+  var baseUrl = "http://" + tracker.address + ":" + tracker.port + "/";
+  var uri = "/disconnect";
+
+  var options = {
+    uri: uri,
+    baseUrl: baseUrl,
+    method: "POST",
+    json: true,
+    body: { username: user.username }
+  };
+
+  request(options, function(error, response, body) {
+    if (error) {
+      console.log(error);
+    } else if (response.statusCode === 200) {
+      callback(body);
+      console.log(body);
+    }
+  });
+
+}
+
 function searchServer(tracker, keyword, callback){
   var baseUrl = "http://" + tracker.address + ":" + tracker.port + "/";
   var uri = "/search";
