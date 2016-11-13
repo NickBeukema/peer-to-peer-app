@@ -1,7 +1,9 @@
 var app = {};
 var port = 7710;
-var server = require("./js/ftps").server({port: port});
-var client = require("./js/ftpc").client({port: port});
+//var ftpClient = require("./js/ftpc").client({port: port});
+var ftpClient = require("./js/ftpc");
+var ftpServer = require("./js/ftps");
+//var ftpServer = require("./js/ftps").server({port: port});
 
 var trackerAddress = document.getElementById("tracker-address");
 var trackerPort = document.getElementById("tracker-port");
@@ -98,6 +100,7 @@ connect.addEventListener("click", function(event){
       app.user = user;
 
       uploadFiles(user.username);
+      app.ftpServer = ftpServer.server({port: port});
     }
   });
 });
@@ -111,6 +114,15 @@ search.addEventListener("keyup", function(event){
 });
 
 function downloadFile(hostname, filename, user) {
+  app.ftpConnection = ftpClient.client({host: hostname});
+  app.ftpConnection.get(filename, user.username + '/' + filename, function(hadErr) {
+    if (hadErr) {
+      console.error('There was an error retrieving the file.');
+    } else {
+      console.log('File copied successfully!');
+    }
+  });
+
   console.log(hostname, filename, user);
 }
 

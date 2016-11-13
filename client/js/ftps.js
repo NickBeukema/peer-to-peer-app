@@ -24,6 +24,7 @@ var options = {
         });
     },
     getRoot: function(connection, callback){
+        console.log(connection);
         callback(null, process.cwd() + '/' + connection.username);
     }
 };
