@@ -7,33 +7,16 @@ var root = __dirname;
 var options = {
     host: '127.0.0.1',
     port: 7710,
-    user: 'jack',
-    pass: "test",
-    tlsOnly: false,
-    getInitialCwd: function(connection, callback){
-        var userDir = './' + connection.username;
-
-        fs.exists(userDir, function(exists){
-            if (exists){
-                callback(null, userDir);
-            } else {
-                fs.mkdir(userDir, function(err){
-                    callback(err, userDir);
-                })
-            }
-        });
-    },
-    getRoot: function(connection, callback){
-        console.log(connection);
-        callback(null, process.cwd() + '/' + connection.username);
-    }
+    user: 'ftpuser',
+    pass: 'password',
+    tlsOnly: false
 };
 
 module.exports = {
     defaultOptions: function(){
         return options;
     },
-    server: function(customOptions){
+    server: function(customOptions, fileDir){
         customOptions = customOptions || {};
 
         Object.keys(options).forEach(function(key){
@@ -41,6 +24,25 @@ module.exports = {
                 customOptions[key] = options[key];
             }
         });
+
+        customOptions.getInitialCwd = function(connection, callback){
+            var userDir = './' + fileDir;
+
+            fs.exists(userDir, function(exists){
+                if (exists){
+                    callback(null, userDir);
+                } else {
+                    fs.mkdir(userDir, function(err){
+                        callback(err, userDir);
+                    })
+                }
+            });
+        }
+
+        customOptions.getRoot = function(connection, callback){
+            console.log(connection);
+            callback(null, process.cwd() + '/' + fileDir);
+        }
 
         var server = new Server(customOptions.host, customOptions);
 
@@ -64,8 +66,9 @@ module.exports = {
             });
         });
 
+        server.debugging = 4;
         server.listen(customOptions.port);
-        console.log("ftp server started");
+        console.log("ftp server started on port " + customOptions.port);
         return server;
     }
 };

@@ -1,8 +1,10 @@
 var app = {};
-var port = 7710;
+var ftpListeningPort = 7710;
+var ftpClientConnectPort = 7710;
 //var ftpClient = require("./js/ftpc").client({port: port});
 var ftpClient = require("./js/ftpc");
 var ftpServer = require("./js/ftps");
+var ipc = require('ipc');
 //var ftpServer = require("./js/ftps").server({port: port});
 
 var trackerAddress = document.getElementById("tracker-address");
@@ -12,6 +14,13 @@ var hostname = document.getElementById("hostname");
 var connectionSpeed = document.getElementById("speed");
 
 var fs = require('fs');
+
+ipc.send('getPort');
+ipc.on('receivePorts', function(ports){
+  console.log(ports);
+  ftpListeningPort = ports.ftpport;
+  ftpClientConnectPort = ports.trackerport;
+});
 
 var enums = {
   "disconnected": 0,
@@ -100,7 +109,7 @@ connect.addEventListener("click", function(event){
       app.user = user;
 
       uploadFiles(user.username);
-      app.ftpServer = ftpServer.server({port: port});
+      app.ftpServer = ftpServer.server({port: ftpListeningPort}, user.username);
     }
   });
 });
@@ -114,16 +123,17 @@ search.addEventListener("keyup", function(event){
 });
 
 function downloadFile(hostname, filename, user) {
-  app.ftpConnection = ftpClient.client({host: hostname});
-  app.ftpConnection.get(filename, user.username + '/' + filename, function(hadErr) {
+  console.log(ftpClientConnectPort);
+  app.ftpConnection = ftpClient.client({host: hostname, port: ftpClientConnectPort});
+
+  var str = ""; // Will store the contents of the file
+  app.ftpConnection.get('/' + filename, user.username + '/' + filename, function(hadErr) {
     if (hadErr) {
       console.error('There was an error retrieving the file.');
     } else {
       console.log('File copied successfully!');
     }
   });
-
-  console.log(hostname, filename, user);
 }
 
 function updateSearchResults(res){

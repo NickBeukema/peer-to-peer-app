@@ -7,7 +7,7 @@ var ipc = require('ipc');
 var CLIConfigurations = { trackerport: 6548, ftpport: 7710 };
 
 if(process.argv.length >= 3) {
-  CLIConfigurations.port = process.argv[2];
+  CLIConfigurations.ftpport = process.argv[2];
   CLIConfigurations.trackerport = process.argv[3] || CLIConfigurations.trackerport;
 }
 
@@ -26,7 +26,7 @@ app.on('ready', function() {
 
 
 ipc.on('getPort', function(event, data) {
-  mainWindow.webContents.send('defaultPorts', CLIConfigurations);
+  mainWindow.webContents.send('receivePorts', CLIConfigurations);
 });
 
 
