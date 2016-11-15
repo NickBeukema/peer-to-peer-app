@@ -24,11 +24,9 @@ function postToServer(baseUrl, uri, body, callback) {
 
   request(options, function (error, response, body) {
     if (error){
-      console.log(error);
-    }else if (response.statusCode === 200){
-
+      console.error(error);
+    } else if (response.statusCode === 200){
       callback(body);
-      console.log(body);
     }
   });
 }
@@ -72,11 +70,9 @@ function searchServer(tracker, username, keyword, callback){
 
   request(options, function(err, res, body){
     if (err){
-      console.log(err);
+      console.error(err);
     } else if (res.statusCode === 200){
       callback(body);
-    } else {
-
     }
   });
 }

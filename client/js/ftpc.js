@@ -29,10 +29,10 @@ module.exports = {
           customOptions.pass,
           function(err, res){
             if (err){
-              console.log(err);
+              // console.log(err);
               return;
             }
-            console.log(res);
+            // console.log(res);
           }
         );
 

@@ -19,6 +19,9 @@ module.exports = {
     server: function(customOptions, fileDir){
         customOptions = customOptions || {};
 
+        var debug = customOptions.debug;
+        if(debug) { delete customOptions.debug; }
+
         Object.keys(options).forEach(function(key){
             if (!customOptions.hasOwnProperty(key)){
                 customOptions[key] = options[key];
@@ -40,7 +43,6 @@ module.exports = {
         }
 
         customOptions.getRoot = function(connection, callback){
-            console.log(connection);
             callback(null, process.cwd() + '/' + fileDir);
         }
 
@@ -66,9 +68,9 @@ module.exports = {
             });
         });
 
-        server.debugging = 4;
+        if(debug) { server.debugging = 4; }
+
         server.listen(customOptions.port);
-        console.log("ftp server started on port " + customOptions.port);
         return server;
     }
 };

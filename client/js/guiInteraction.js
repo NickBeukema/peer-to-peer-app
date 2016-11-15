@@ -17,7 +17,7 @@ var connectionSpeed = document.getElementById("speed");
 
 ipc.send('getPort');
 ipc.on('receivePorts', function(ports){
-  console.log(ports);
+  logIfDebugOn(ports);
   ftpListeningPort = ports.ftpport;
   ftpClientConnectPort = ports.trackerport;
 });
@@ -72,7 +72,7 @@ function uploadFiles(username) {
     };
 
     uploadFilesToServer(app.tracker, body, function(resp){
-      console.log(resp);
+      logIfDebugOn(resp);
     });
   });
 }
@@ -89,7 +89,7 @@ connect.addEventListener("click", function(event){
     self.innerText = "connect to tracker";
 
     disconnectFromServer(app.tracker, app.user, function(res){
-      console.log(res);
+      logIfDebugOn(res);
       updateGUI(disconnected);
       openServerInfoSection();
     });
@@ -116,7 +116,7 @@ connect.addEventListener("click", function(event){
   this.innerText = "connecting to " + tracker.address + ":" + tracker.port;
 
   registerWithServer(tracker, user, function(res){
-    console.log(res);
+    logIfDebugOn(res);
     if (res.status === "connected"){
       self.classList.remove("btn-info");
       self.classList.add("btn-success");
@@ -135,7 +135,11 @@ connect.addEventListener("click", function(event){
       app.user = user;
 
       uploadFiles(user.username);
-      app.ftpServer = ftpServer.server({port: ftpListeningPort}, user.username);
+
+      var serverOpts = { port: ftpListeningPort }
+      if(app.debug) { serverOpts.debug = 1 }
+
+      app.ftpServer = ftpServer.server(serverOpts, user.username);
     }
   });
 });
@@ -143,15 +147,21 @@ connect.addEventListener("click", function(event){
 var search = document.getElementById("search-keyword");
 search.addEventListener("keyup", function(event){
   if (event.keyCode === 13 || event.which === 13){
-    console.log("Searching for '" + this.value + "'");
+    logIfDebugOn("Searching for '" + this.value + "'");
     searchServer(app.tracker, app.user.username, this.value, updateSearchResults);
   }
 });
 
 function downloadFile(hostname, filename, description, user) {
-  console.log(ftpClientConnectPort);
+
+  // Connecting to Peer FTP Server
+  appendFTPStatusText('Connecting to ' + hostname + ':' + ftpClientConnectPort);
   app.ftpConnection = ftpClient.client({host: hostname, port: ftpClientConnectPort});
 
+  appendFTPStatusText('Sucessfully connected to ' + hostname + ':' + ftpClientConnectPort);
+
+  // Performing RETR from Peer FTP Server
+  appendFTPStatusText('RETR ' + filename);
   app.ftpConnection.get('/' + filename, user.username + '/' + filename, function(hadErr) {
     if (hadErr) {
       appendFTPStatusText('There was an error retrieving the file: ' + filename, errorStatus);
@@ -159,6 +169,7 @@ function downloadFile(hostname, filename, description, user) {
       appendFTPStatusText('File successfully downloaded: ' + filename, successStatus);
       addFileToFileList(user.username, filename, description, function(){
         uploadFiles(user.username);
+        appendFTPStatusText('FTP session closed with ' + hostname + ':' + ftpClientConnectPort);
       });
     }
   });
@@ -168,7 +179,10 @@ var ftpTextArea = document.getElementsByClassName('app-ftp-statuses')[0];
 
 function appendFTPStatusText(text, status) {
   var statusLine = document.createElement("p");
-  var statusText = status === errorStatus ? "error" : "success";
+  var statusText = "";
+
+  if(status === errorStatus) { statusText = "error"; }
+  if(status === successStatus) { statusText = "success"; }
 
   statusLine.setAttribute("class", statusText);
   statusLine.textContent = text;
@@ -179,7 +193,7 @@ function appendFTPStatusText(text, status) {
 
 function updateSearchResults(res){
   var html = "";
-  console.log("Search results");
+  logIfDebugOn("Search results");
   var i = 1;
   res.forEach(function(file){
     html += "<tr class='app-search-row'><th scope='row'>" + i + "</th><td>" + file.speed + "</td><td>" + file.hostname + "<td>" + file.filename + "</td><td>" + file.description + "</td><td><button class='btn app-download-button' data-hostname='" + file.hostname + "' data-filename='" + file.filename + "' data-description='" + file.description + "'>Download</td></tr>";
@@ -230,3 +244,9 @@ var toggleServerInfoButton = document.getElementsByClassName('app-toggle-server-
 toggleServerInfoButton.addEventListener('click', function(event) {
   toggleServerInfoSection();
 });
+
+function logIfDebugOn(item) {
+  if(app.debug) {
+    console.log(item);
+  }
+}

@@ -17,10 +17,10 @@ var settingsWindow = null;
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
         height: 1080,
-        width: 1920
+        width: 800
     });
 
-    mainWindow.toggleDevTools();
+    // mainWindow.toggleDevTools();
     mainWindow.loadUrl('file://' + __dirname + '/index.html');
 });
 

@@ -38,20 +38,35 @@ File.prototype = {
    }
 };
 
+function clearLine() {
+  console.log('\n\n');
+}
+
 //Function to print the users table
 function printUsersTable() {
-   console.log('\nUsers Table:');
-   for(var i = 0; i < usersTable.length; i++){
-      console.log('User ' + i + ': ' + usersTable[i].username + ', ' + usersTable[i].hostname + ', ' + usersTable[i].connSpeed);
+   console.log('Users Table:');
+   if(usersTable.length === 0) {
+     console.log(' -- No registered users --');
+   } else {
+     for(var i = 0; i < usersTable.length; i++){
+        console.log('User ' + i + ': ' + usersTable[i].username + ', ' + usersTable[i].hostname + ', ' + usersTable[i].connSpeed);
+     }
    }
+
+   clearLine();
 }
 
 //Function to print the files table
 function printFilesTable() {
-   console.log('\nFiles Table:');
-   for(var i = 0; i < filesTable.length; i++){
-      console.log('File ' + i + ': ' + filesTable[i].filename + ', ' + filesTable[i].description);
+   console.log('Files Table:');
+   if(filesTable.length === 0) {
+     console.log(' -- No registered files --');
+   } else {
+     for(var i = 0; i < filesTable.length; i++){
+        console.log('File ' + i + ': ' + filesTable[i].filename + ', ' + filesTable[i].description);
+     }
    }
+   clearLine();
 }
 
 function lookupUser(username) {
@@ -61,7 +76,6 @@ function lookupUser(username) {
 
 //Allow client to connect, store user and file information
 app.post('/register', function(req, res) {
-   //console.log("hit");
 
    //Store the username, hostname, and connection speed
    var username = req.body.username;
@@ -71,22 +85,26 @@ app.post('/register', function(req, res) {
    //If client didn't send the required information, respond with missing info
    if(username === undefined){
       res.json('Missing username');
-      console.log('\nClient failed to join');
+      console.log('Client failed to join');
+      clearLine();
       return;
    }
    else if(hostname === undefined){
       res.json('Missing hostname');
-      console.log('\nClient failed to join');
+      console.log('Client failed to join');
+      clearLine();
       return;
    }
    else if(connSpeed === undefined){
       res.json('Missing connection speed');
-      console.log('\nClient failed to join');
+      console.log('Client failed to join');
+      clearLine();
       return;
    }
 
    //Else, let the client join
-   console.log('\nClient ' + username + ' has joined.');
+   console.log('Client ' + username + ' has joined.');
+    clearLine();
 
 
    var user = lookupUser(username);
@@ -122,7 +140,8 @@ app.post('/upload-files', function (req, res) {
 
   if(!user) {
     res.json('User is not register, please register before uploading files');
-    console.log('\nUsername ' + username + ' not found.');
+    console.log('Username ' + username + ' not found.');
+    clearLine();
     return;
   }
 
@@ -146,9 +165,8 @@ app.post('/upload-files', function (req, res) {
       filesTable.push(file);
     }
 
-
-
   }
+  clearLine();
 
   //Print Users and Files tables to console
   printUsersTable();
@@ -182,6 +200,8 @@ app.post('/disconnect', function (req, res) {
     res.json('User not found');
   }
 
+  clearLine();
+
   printUsersTable();
   printFilesTable();
 
@@ -193,13 +213,20 @@ app.get('/search', function (req, res) {
 
    var keyword = req.query.keyword;
    var username = req.query.username;
-   console.log('Client searched for ' + keyword);
+   console.log(username + ' searched for "' + keyword + '"');
+   clearLine();
 
    var files = filesTable.filter(function(file){
       return file.description.includes(keyword) && file.owner !== username;
    });
 
-   console.log(files);
+   console.log("Search Results");
+   files.forEach(function(file) {
+     console.log(file)
+   });
+
+   clearLine();
+
    res.json(files);
 
 });
@@ -210,4 +237,5 @@ var server = app.listen(6548, function () {
    var host = server.address().address;
    var port = server.address().port;
    console.log('Server listening at %s:%s', host, port);
+   clearLine();
 });
