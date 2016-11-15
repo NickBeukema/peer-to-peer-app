@@ -1,6 +1,12 @@
 {
   "files": [
-    { "filename": "code.rb", "description": "Code written in Ruby" },
-    { "filename": "resume.txt", "description": "Nicks resume" }
+    {
+      "filename": "code.rb",
+      "description": "Code written in Ruby"
+    },
+    {
+      "filename": "resume.txt",
+      "description": "Nicks resume"
+    }
   ]
 }

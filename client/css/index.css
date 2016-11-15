@@ -23,7 +23,7 @@ label{
 .collapsable-section {
   overflow: hidden;
   transition: max-height 1s;
-  max-height: 500px;
+  max-height: 800px;
 }
 
 .collapsable-section.collapsed {
@@ -38,4 +38,21 @@ label{
   display: none;
   width: 100%;
   text-align: center;
+}
+
+.ftp-statuses {
+  display: inline-block;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #444;
+  height: 200px;
+  overflow-y: auto;
+}
+
+.ftp-statuses .success {
+  color: green;
+}
+
+.ftp-statuses .error {
+  color: red;
 }

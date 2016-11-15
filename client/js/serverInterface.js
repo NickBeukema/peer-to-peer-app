@@ -58,7 +58,7 @@ function disconnectFromServer(tracker, user, callback) {
   postToServer(baseUrl, uri, body, callback);
 }
 
-function searchServer(tracker, keyword, callback){
+function searchServer(tracker, username, keyword, callback){
   var baseUrl = "http://" + tracker.address + ":" + tracker.port + "/";
   var uri = "/search";
 
@@ -67,7 +67,7 @@ function searchServer(tracker, keyword, callback){
     baseUrl: baseUrl,
     method: "GET",
     json: true,
-    qs: { "keyword": keyword }
+    qs: { "keyword": keyword, "username": username }
   };
 
   request(options, function(err, res, body){

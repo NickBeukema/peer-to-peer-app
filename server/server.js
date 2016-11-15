@@ -131,9 +131,23 @@ app.post('/upload-files', function (req, res) {
 
   // Push files and descriptions to files table
   for(var i = 0; i < files.length; i++) {
-    console.log("Uploading file: " + files[i].filename);
-    var file = new File(files[i].filename, files[i].description, user.hostname, user.connSpeed, user.username);
-    filesTable.push(file);
+    var foundFileIndex = filesTable.findIndex(function(file) { return file.owner == user.username && file.description == files[i].description });
+
+    // If the file already exists, assume a description update
+    if(foundFileIndex >= 0) {
+      console.log("File found: " + files[i].filename);
+      console.log("Updating file description: " + files[i].filename);
+
+      filesTable[foundFileIndex].description = files[i].description;
+    } else {
+      console.log("Uploading file: " + files[i].filename);
+
+      var file = new File(files[i].filename, files[i].description, user.hostname, user.connSpeed, user.username);
+      filesTable.push(file);
+    }
+
+
+
   }
 
   //Print Users and Files tables to console
@@ -174,15 +188,15 @@ app.post('/disconnect', function (req, res) {
 });
 
 
-//Search and return file
+// Search and return file
 app.get('/search', function (req, res) {
 
-   debugger;
    var keyword = req.query.keyword;
+   var username = req.query.username;
    console.log('Client searched for ' + keyword);
 
    var files = filesTable.filter(function(file){
-      return file.description.includes(keyword);
+      return file.description.includes(keyword) && file.owner !== username;
    });
 
    console.log(files);

@@ -1,19 +1,19 @@
 var app = {};
-var ftpListeningPort = 7710;
-var ftpClientConnectPort = 7710;
-//var ftpClient = require("./js/ftpc").client({port: port});
+
 var ftpClient = require("./js/ftpc");
 var ftpServer = require("./js/ftps");
+
+var ftpListeningPort = 7710;
+var ftpClientConnectPort = 7710;
+
 var ipc = require('ipc');
-//var ftpServer = require("./js/ftps").server({port: port});
+var fs = require('fs');
 
 var trackerAddress = document.getElementById("tracker-address");
 var trackerPort = document.getElementById("tracker-port");
 var username = document.getElementById("username");
 var hostname = document.getElementById("hostname");
 var connectionSpeed = document.getElementById("speed");
-
-var fs = require('fs');
 
 ipc.send('getPort');
 ipc.on('receivePorts', function(ports){
@@ -24,11 +24,16 @@ ipc.on('receivePorts', function(ports){
 
 var enums = {
   "disconnected": 0,
-  "connected": 1
+  "connected": 1,
+  "success": 1,
+  "error": 0
 }
 
 var disconnected = enums.disonnected;
 var connected = enums.connected;
+
+var successStatus = enums.success;
+var errorStatus = enums.error;
 
 app.status = disconnected;
 
@@ -40,8 +45,27 @@ function getFilesForUser(username, callback) {
   });
 }
 
+function addFileToFileList(username, filename, description, callback) {
+  var newFile = { "filename": filename, "description": description }
+  getFilesForUser(username, function(fileList) {
+    var exists = false;
+    fileList.files.forEach(function(file) {
+      if(file.filename === newFile.filename) {
+        file.description = newFile.description;
+        exists = true;
+      }
+    });
+
+    if(!exists) {
+      fileList.files.push(newFile);
+    }
+
+    fs.writeFile(username + '/filelist.json', JSON.stringify(fileList, null, 2), 'utf-8', callback);
+  });
+}
+
 function uploadFiles(username) {
-  var files = getFilesForUser(username, function(fileList){
+  getFilesForUser(username, function(fileList){
     var body = {
       username: username,
       files: fileList.files
@@ -96,6 +120,7 @@ connect.addEventListener("click", function(event){
     if (res.status === "connected"){
       self.classList.remove("btn-info");
       self.classList.add("btn-success");
+
       setTimeout(function(){
         self.classList.add("btn-danger");
         self.classList.remove("btn-success");
@@ -104,6 +129,7 @@ connect.addEventListener("click", function(event){
         closeServerInfoSection();
 
       }, 500);
+
       self.innerText = "connected!";
       app.tracker = tracker;
       app.user = user;
@@ -118,22 +144,37 @@ var search = document.getElementById("search-keyword");
 search.addEventListener("keyup", function(event){
   if (event.keyCode === 13 || event.which === 13){
     console.log("Searching for '" + this.value + "'");
-    searchServer(app.tracker, this.value, updateSearchResults);
+    searchServer(app.tracker, app.user.username, this.value, updateSearchResults);
   }
 });
 
-function downloadFile(hostname, filename, user) {
+function downloadFile(hostname, filename, description, user) {
   console.log(ftpClientConnectPort);
   app.ftpConnection = ftpClient.client({host: hostname, port: ftpClientConnectPort});
 
-  var str = ""; // Will store the contents of the file
   app.ftpConnection.get('/' + filename, user.username + '/' + filename, function(hadErr) {
     if (hadErr) {
-      console.error('There was an error retrieving the file.');
+      appendFTPStatusText('There was an error retrieving the file: ' + filename, errorStatus);
     } else {
-      console.log('File copied successfully!');
+      appendFTPStatusText('File successfully downloaded: ' + filename, successStatus);
+      addFileToFileList(user.username, filename, description, function(){
+        uploadFiles(user.username);
+      });
     }
   });
+}
+
+var ftpTextArea = document.getElementsByClassName('app-ftp-statuses')[0];
+
+function appendFTPStatusText(text, status) {
+  var statusLine = document.createElement("p");
+  var statusText = status === errorStatus ? "error" : "success";
+
+  statusLine.setAttribute("class", statusText);
+  statusLine.textContent = text;
+
+  ftpTextArea.appendChild(statusLine);
+
 }
 
 function updateSearchResults(res){
@@ -141,7 +182,7 @@ function updateSearchResults(res){
   console.log("Search results");
   var i = 1;
   res.forEach(function(file){
-    html += "<tr class='app-search-row'><th scope='row'>" + i + "</th><td>" + file.speed + "</td><td>" + file.hostname + "<td>" + file.filename + "</td><td>" + file.description + "</td><td><button class='btn app-download-button' data-hostname='" + file.hostname + "' data-filename='" + file.filename + "'>Download</td></tr>";
+    html += "<tr class='app-search-row'><th scope='row'>" + i + "</th><td>" + file.speed + "</td><td>" + file.hostname + "<td>" + file.filename + "</td><td>" + file.description + "</td><td><button class='btn app-download-button' data-hostname='" + file.hostname + "' data-filename='" + file.filename + "' data-description='" + file.description + "'>Download</td></tr>";
     i++;
   });
   document.getElementById("search-results").innerHTML = html;
@@ -150,7 +191,7 @@ function updateSearchResults(res){
 
   Array.prototype.forEach.call(buttons, function(button) {
     button.addEventListener('click', function(event) {
-      downloadFile(button.dataset.hostname, button.dataset.filename, app.user);
+      downloadFile(button.dataset.hostname, button.dataset.filename, button.dataset.description, app.user);
     });
   });
 
