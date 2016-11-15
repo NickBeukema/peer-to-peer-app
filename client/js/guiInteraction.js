@@ -169,7 +169,12 @@ function downloadFile(hostname, filename, description, user) {
       appendFTPStatusText('File successfully downloaded: ' + filename, successStatus);
       addFileToFileList(user.username, filename, description, function(){
         uploadFiles(user.username);
-        appendFTPStatusText('FTP session closed with ' + hostname + ':' + ftpClientConnectPort);
+
+        app.ftpConnection.raw.quit(function(err, data) {
+          if (err) { return console.error(err); }
+            appendFTPStatusText('FTP session closed with ' + hostname + ':' + ftpClientConnectPort);
+        });
+
       });
     }
   });
