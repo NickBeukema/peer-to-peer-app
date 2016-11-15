@@ -1,12 +1,12 @@
 {
   "files": [
     {
-      "filename": "hack.js",
-      "description": "Jacks hack"
+      "filename": "hello-world.js",
+      "description": "A JavaScript hello world script"
     },
     {
-      "filename": "jacks first file.txt",
-      "description": "Jack wrote this when he was 2"
+      "filename": "a-story.txt",
+      "description": "A Sci-Fi mystery written by Jack"
     }
   ]
 }
